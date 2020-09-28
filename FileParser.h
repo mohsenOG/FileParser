@@ -8,7 +8,7 @@ class ParserAbstract
 {
 public:
 	ParserAbstract(QString filePath, QString functionName);
-	virtual QFile& parse() = 0;
+	virtual QString parse() = 0;
 
 protected:
 	QString m_filePath;
@@ -16,19 +16,18 @@ protected:
 };
 
 
-
 class CppParser : public ParserAbstract
 {
 public:
 	CppParser(QString filePath, QString functionName) :ParserAbstract(filePath, functionName) {};
-	QFile& parse() override;
+	/** Returns the canonical path of the newly created parsed file*/
+	QString parse() override;
 
 private:
 	void processLines(QFile& outputFile, QVector<QString>& lines);
 	int getFirstFunctionLineIndex(QVector<QString>& lines);
 	void readOpenningCurlyBrackets(QString& line);
 	void readClosingCurlyBrackets(QString& line);
-
 
 private:
 	int m_numberOfOpenningBrackets{ 0 };

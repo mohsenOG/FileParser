@@ -1,3 +1,5 @@
+#include "Python.h"
+
 #include "FileParser.h"
 
 #include <iostream>
@@ -8,10 +10,14 @@ using namespace std;
 
 int main()
 {
-	QString filePath = "XXX";
-	QString functionName = "XXX";
+	QString filePath = "E:/a4-dev/animator/a4lib_cmd/src/CommandC2d.cpp";
+	QString functionName = "int GraphAxisWeightFilter(CommandS * cmd, int nDim";
 	CppParser parser{ filePath, functionName };
-	auto& file = parser.parse();
-	cout << "Hello" << endl;
+	QString filepath = parser.parse();
+
+	//Py_Initialize();
+	//Py_Finalize();
+
+	cout << "hellp" << endl;
 	return 0;
 }

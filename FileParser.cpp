@@ -1,4 +1,6 @@
 ﻿#include "FileParser.h"
+#include "qfileinfo.h"
+#include <qdir.h>
 
 ParserAbstract::ParserAbstract(QString filePath, QString functionName) :
 	m_filePath(filePath),
@@ -6,15 +8,17 @@ ParserAbstract::ParserAbstract(QString filePath, QString functionName) :
 {
 }
 
-QFile& CppParser::parse()
+QString CppParser::parse()
 {
 	//TODO convert m_filePath to absolute path
 	//TODO make a generic path rather than hard coded
 	QFile inputFile(m_filePath);
-	QFile outputFile("output.txt");
+	//QString tempFilePath = QDir::tempPath() + "output.txt";
+	QString tempFilePath = "output.txt";
+	QFile outputFile(tempFilePath);
 	if (!inputFile.open(QIODevice::ReadOnly | QIODevice::Text) ||
 		!outputFile.open(QIODevice::WriteOnly | QIODevice::Text))
-		return std::move(QFile());
+		return QString();
 
 	QVector<QString>lines;
 	lines.reserve(10000);
@@ -26,7 +30,9 @@ QFile& CppParser::parse()
 	inputFile.close();
 	outputFile.close();
 
-	return std::move(outputFile);
+	QFileInfo info(outputFile);
+
+	return info.canonicalFilePath();
 }
 
 void CppParser::processLines(QFile& outputFile, QVector<QString>& lines)
