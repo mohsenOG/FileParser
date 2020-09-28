@@ -2,46 +2,52 @@
 #include "qfileinfo.h"
 #include <qdir.h>
 
-ParserAbstract::ParserAbstract(QString filePath, QString functionName) :
-	m_filePath(filePath),
-	m_functionName(functionName)
+ParserAbstract::ParserAbstract(QMultiMap<QString, QString> functionPathsAndNames) :
+	m_fucntionPathsAndNames(functionPathsAndNames)
 {
 }
 
 QString CppParser::parse()
 {
-	//TODO convert m_filePath to absolute path
-	//TODO make a generic path rather than hard coded
-	QFile inputFile(m_filePath);
-	//QString tempFilePath = QDir::tempPath() + "output.txt";
-	QString tempFilePath = "output.txt";
-	QFile outputFile(tempFilePath);
-	if (!inputFile.open(QIODevice::ReadOnly | QIODevice::Text) ||
-		!outputFile.open(QIODevice::WriteOnly | QIODevice::Text))
+	//QString tempOutputPath = QDir::tempPath() + "output.txt";
+	QString tempOutputPath = "output.txt";
+	if (QFileInfo::exists(tempOutputPath))
+		QFile::remove(tempOutputPath);
+
+	QFile outputFile(tempOutputPath);
+	if (!outputFile.open(QIODevice::WriteOnly | QIODevice::Text))
 		return QString();
 
-	QVector<QString>lines;
-	lines.reserve(10000);
-	while (!inputFile.atEnd())
+	for (auto filePathAndName = m_fucntionPathsAndNames.begin(); filePathAndName != m_fucntionPathsAndNames.end(); ++filePathAndName)
 	{
-		lines.append(inputFile.readLine());
-	}
-	processLines(outputFile, lines);
-	inputFile.close();
-	outputFile.close();
+		QFile inputFile(filePathAndName.key());
+		if (!inputFile.open(QIODevice::ReadOnly | QIODevice::Text))
+			return QString();
 
+		QVector<QString>lines;
+		lines.reserve(10000);
+		while (!inputFile.atEnd())
+		{
+			lines.append(inputFile.readLine());
+		}
+		inputFile.close();
+		processLines(outputFile, lines, filePathAndName.value());
+		addEmptyLine(outputFile);
+	}
+	outputFile.close();
 	QFileInfo info(outputFile);
 
 	return info.canonicalFilePath();
 }
 
-void CppParser::processLines(QFile& outputFile, QVector<QString>& lines)
+void CppParser::processLines(QFile& outputFile, QVector<QString>& lines, QString functionName)
 {
 	//finding index of function first line in all lines.
-	int idx = getFirstFunctionLineIndex(lines);
+	int idx = getFirstFunctionLineIndex(lines, functionName);
 	if (idx == -1)
 		return;
-
+	
+	resetNumberOfOpeningAndClosingBrackets();
 	for (int i = idx; i < lines.size(); ++i)
 	{
 		readOpenningCurlyBrackets(lines[i]);
@@ -55,12 +61,12 @@ void CppParser::processLines(QFile& outputFile, QVector<QString>& lines)
 	return;
 }
 
-int CppParser::getFirstFunctionLineIndex(QVector<QString>& lines)
+int CppParser::getFirstFunctionLineIndex(QVector<QString>& lines, QString functionName)
 {
 	int idx = -1;
 	for (int i = 0; i < lines.size(); ++i)
 	{
-		if (lines.at(i).contains(m_functionName, Qt::CaseInsensitive))
+		if (lines.at(i).contains(functionName, Qt::CaseInsensitive))
 			idx = i;
 	}
 	return idx;
@@ -76,4 +82,16 @@ void CppParser::readClosingCurlyBrackets(QString& line)
 {
 	if (line.contains("}", Qt::CaseInsensitive))
 		++m_numberOfClosingBrackets;
+}
+
+void CppParser::resetNumberOfOpeningAndClosingBrackets()
+{
+	m_numberOfOpenningBrackets = 0;
+	m_numberOfClosingBrackets = 0;
+}
+
+void CppParser::addEmptyLine(QFile& file)
+{
+	QString emptyString{};
+	file.write(emptyString.toUtf8());
 }

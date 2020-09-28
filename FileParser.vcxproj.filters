@@ -3,9 +3,15 @@
   <ItemGroup>
     <ClCompile Include="FileParser.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Analyser.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="FileParser.h" />
+    <ClInclude Include="Analyser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FileParser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header Files">
