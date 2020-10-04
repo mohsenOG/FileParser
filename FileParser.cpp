@@ -1,6 +1,8 @@
 ﻿#include "FileParser.h"
 #include "qfileinfo.h"
 #include <qdir.h>
+#include <cstdlib>
+
 
 ParserAbstract::ParserAbstract(QMultiMap<QString, QString> functionPathsAndNames) :
 	m_fucntionPathsAndNames(functionPathsAndNames)
@@ -10,17 +12,19 @@ ParserAbstract::ParserAbstract(QMultiMap<QString, QString> functionPathsAndNames
 QString CppParser::parse()
 {
 	//QString tempOutputPath = QDir::tempPath() + "output.txt";
-	QString tempOutputPath = "output.txt";
-	if (QFileInfo::exists(tempOutputPath))
-		QFile::remove(tempOutputPath);
+	//QString tempOutputPath = "output.txt";
+	QString jenkinsJobPath = QString::fromLocal8Bit(::getenv("ENV_JOB_PATH"));
+	QString outputFilePath = jenkinsJobPath + "/commitedFunctions.cpp";
+	if (QFileInfo::exists(outputFilePath))
+		QFile::remove(outputFilePath);
 
-	QFile outputFile(tempOutputPath);
+	QFile outputFile(outputFilePath);
 	if (!outputFile.open(QIODevice::WriteOnly | QIODevice::Text))
 		return QString();
 
-	for (auto filePathAndName = m_fucntionPathsAndNames.begin(); filePathAndName != m_fucntionPathsAndNames.end(); ++filePathAndName)
+	for (auto functionPathAndName = m_fucntionPathsAndNames.begin(); functionPathAndName != m_fucntionPathsAndNames.end(); ++functionPathAndName)
 	{
-		QFile inputFile(filePathAndName.key());
+		QFile inputFile(functionPathAndName.key());
 		if (!inputFile.open(QIODevice::ReadOnly | QIODevice::Text))
 			return QString();
 
@@ -31,7 +35,7 @@ QString CppParser::parse()
 			lines.append(inputFile.readLine());
 		}
 		inputFile.close();
-		processLines(outputFile, lines, filePathAndName.value());
+		processLines(outputFile, lines, functionPathAndName.value());
 		addEmptyLine(outputFile);
 	}
 	outputFile.close();

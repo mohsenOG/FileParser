@@ -31,8 +31,6 @@ private:
 	void resetNumberOfOpeningAndClosingBrackets();
 	void addEmptyLine(QFile& file);
 
-
-
 private:
 	int m_numberOfOpenningBrackets{ 0 };
 	int m_numberOfClosingBrackets{ 0 };

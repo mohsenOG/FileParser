@@ -1,18 +1,43 @@
 #include "Analyser.h"
-#include "Python.h"
 #include <qfile.h>
+#include <qprocess.h>
+#include <qstringlist.h>
+#include <iostream>
+#include <qfileinfo.h>
+#include <qdir.h>
+
+const QString Analyser::lizardScriptPath = "./3rdParty/lizard-master/lizard.py";
+
 
 Analyser::Analyser(QString filePath) :
-	m_filePath(filePath)
+	m_inputFilePath(filePath)
 {
 
 }
-
-Analyser::~Analyser()
+QString Analyser::analyse()
 {
-	QFile::remove(m_filePath);
-}
+	QStringList args;
+	args << "cmd.exe /C python" << lizardScriptPath << "-w" << m_inputFilePath;
 
-void Analyser::analyse()
-{
+	QProcess lizardProcess;
+	lizardProcess.start(args.join(' '));
+	lizardProcess.waitForStarted();
+	lizardProcess.waitForFinished();
+	auto result = lizardProcess.readAllStandardOutput();
+
+	// write the result to file.
+	QString outputPath = QDir::tempPath() + "/complexityAnalyser_result.html";
+	QFile file(outputPath);
+	
+	if (file.exists())
+		QFile::remove(outputPath);
+	if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+		return QString();
+
+	file.write(result);
+	file.close();
+
+	QFileInfo fileInfo(file);
+
+	return fileInfo.canonicalFilePath();
 }

@@ -350,3 +350,5 @@ MigrationBackup/
 .ionide/
 /output.txt
 /3rdParty/lizard-master
+/diff.commit
+/commit.diff

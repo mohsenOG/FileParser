@@ -5,12 +5,14 @@
 class Analyser
 {
 public:
-	Analyser(QString filePath);
-	~Analyser();
+	static const QString lizardScriptPath;
 
-	void analyse();
+public:
+	Analyser(QString filePath);
+
+	QString analyse();
 
 
 private:
-	QString m_filePath;
+	QString m_inputFilePath;
 };
