@@ -12,14 +12,14 @@ public:
 	virtual QString parse() = 0;
 
 protected:
-	QMultiMap<QString, QString> m_fucntionPathsAndNames;
+	QMultiMap<QString, QString> m_functionPathsAndNames;
 };
 
 
 class CppParser : public ParserAbstract
 {
 public:
-	CppParser(QMultiMap<QString, QString> functionPathsAndNames) :ParserAbstract(functionPathsAndNames) {};
+	CppParser(QMultiMap<QString, QString> functionPathsAndNames);
 	/** Returns the canonical path of the newly created parsed file*/
 	QString parse() override;
 

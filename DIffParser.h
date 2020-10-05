@@ -7,7 +7,7 @@
 class DiffParser
 {
 public:
-	DiffParser(QString& diffFilePath);
+	DiffParser();
 	QMultiMap<QString, QString> parse();
 
 private:

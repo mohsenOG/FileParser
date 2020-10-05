@@ -2,19 +2,37 @@
 #include "qfileinfo.h"
 #include <qdir.h>
 #include <cstdlib>
+#include <cstdio>
 
 
 ParserAbstract::ParserAbstract(QMultiMap<QString, QString> functionPathsAndNames) :
-	m_fucntionPathsAndNames(functionPathsAndNames)
+	m_functionPathsAndNames(functionPathsAndNames)
 {
 }
 
+CppParser::CppParser(QMultiMap<QString, QString> functionPathsAndNames)
+	:
+	ParserAbstract(functionPathsAndNames)
+{
+	// keep only cpp files.
+	auto keyList = m_functionPathsAndNames.uniqueKeys();
+	for (auto key : keyList)
+	{
+		if (key.isEmpty() || !key.endsWith(".cpp"))
+			m_functionPathsAndNames.remove(key);
+	}
+
+}
+
+
 QString CppParser::parse()
 {
-	//QString tempOutputPath = QDir::tempPath() + "output.txt";
-	//QString tempOutputPath = "output.txt";
 	QString jenkinsJobPath = QString::fromLocal8Bit(::getenv("ENV_JOB_PATH"));
 	QString outputFilePath = jenkinsJobPath + "/commitedFunctions.cpp";
+	
+	//printf("jenkinsJobPath %s", jenkinsJobPath.toStdString().c_str());
+	//printf("outputFilePath %s", outputFilePath.toStdString().c_str());
+
 	if (QFileInfo::exists(outputFilePath))
 		QFile::remove(outputFilePath);
 
@@ -22,9 +40,13 @@ QString CppParser::parse()
 	if (!outputFile.open(QIODevice::WriteOnly | QIODevice::Text))
 		return QString();
 
-	for (auto functionPathAndName = m_fucntionPathsAndNames.begin(); functionPathAndName != m_fucntionPathsAndNames.end(); ++functionPathAndName)
+	// Parse each function and save it to a single file in the jenkins job
+	for (auto functionPathAndName = m_functionPathsAndNames.begin(); functionPathAndName != m_functionPathsAndNames.end(); ++functionPathAndName)
 	{
-		QFile inputFile(functionPathAndName.key());
+		QString canonicalFilePath = QString::fromLocal8Bit(::getenv("ENV_A4_WORKSPACE_PATH")) + "/" + functionPathAndName.key();
+		//printf("canonicalFilePath %s", canonicalFilePath.toStdString().c_str());
+
+		QFile inputFile(canonicalFilePath);
 		if (!inputFile.open(QIODevice::ReadOnly | QIODevice::Text))
 			return QString();
 
@@ -58,7 +80,7 @@ void CppParser::processLines(QFile& outputFile, QVector<QString>& lines, QString
 		readClosingCurlyBrackets(lines[i]);
 		outputFile.write(lines[i].toUtf8());
 
-		// When no. of { and } are equal, means the function is read completely.
+		// When no. of { and } are equal, means the function is complete.
 		if (m_numberOfOpenningBrackets > 0 && m_numberOfClosingBrackets > 0 && m_numberOfOpenningBrackets == m_numberOfClosingBrackets)
 			break;
 	}

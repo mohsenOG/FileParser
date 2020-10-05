@@ -3,11 +3,10 @@
 #include <qvector.h>
 #include <qtextstream.h>
 
-DiffParser::DiffParser(QString& diffFilePath)
-	:
-	m_diffFileCanonicalPath(diffFilePath) 
-{}
-
+DiffParser::DiffParser()
+{
+	m_diffFileCanonicalPath = QString::fromLocal8Bit(::getenv("ENV_JOB_PATH")) + "/commit.diff";
+}
 
 QMultiMap<QString, QString> DiffParser::parse()
 {
