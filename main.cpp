@@ -15,50 +15,48 @@
 
 using namespace std;
 
-enum ReturnValue {
-	ERROR = -1,
-	OK = 0
+enum Status {
+	Error = -1,
+	Ok = 0
 };
 
 int main()
 {
 	//Get and check the diff file
-	QString diffFilePath = QString::fromLocal8Bit(::getenv("ENV_JOB_PATH")) + "/commit.diff";
-	QFileInfo diffFileInfo(diffFilePath);
-	if (!diffFileInfo.exists() || !diffFileInfo.isFile())
+	QString svnDiffFilePath = QString::fromLocal8Bit(::getenv("ENV_JOB_PATH")) + "/commit.diff";
+	QFileInfo svnDiffFileInfo(svnDiffFilePath);
+	if (!svnDiffFileInfo.exists() || !svnDiffFileInfo.isFile())
 	{
 		cout << "commit.diff file does not exist!\nCheck your ENV_JOB_PATH in the jenkins script." << endl;
-		return ReturnValue::ERROR;
+		return Status::Error;
 	}
 
-	SvnDiffParser diffParser;
-	QMultiMap<QString, QString> functionSourceFilePathsAndNames = diffParser.parse();
-
-	if (diffParser.hasErrors())
+	SvnDiffParser svnDiffParser;
+	QMultiMap<QString, QString> functionSourceFilePathsAndNames = svnDiffParser.parse();
+	if (svnDiffParser.hasErrors())
 	{
-		for (auto msg : diffParser.errors())
+		for (auto msg : svnDiffParser.errors())
 		{
 			cout << msg.toStdString().c_str() << endl;
 		}
-		return ReturnValue::ERROR;
+		return Status::Error;
 	}
 
 	if (functionSourceFilePathsAndNames.isEmpty())
 	{
 		cout << "There is no change in cpp files.";
-		ReturnValue::OK;
+		Status::Ok;
 	}
 
 	CppParser cppParser{ functionSourceFilePathsAndNames };
 	QString codeSummaryCanonicalPath = cppParser.parse();
-
 	if (cppParser.hasErrors())
 	{
-		for (auto msg : diffParser.errors())
+		for (auto msg : svnDiffParser.errors())
 		{
 			cout << msg.toStdString().c_str() << endl;
 		}
-		return ReturnValue::ERROR;
+		return Status::Error;
 	}
 
 	cout << "Process finished!" << endl;
