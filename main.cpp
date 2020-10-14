@@ -1,6 +1,6 @@
 #include <cstdlib>
 #include "FileParser.h"
-#include "DIffParser.h"
+#include "SvnDiffParser.h"
 
 #include <iostream>
 #include <qstring.h>
@@ -31,7 +31,7 @@ int main()
 		return ReturnValue::ERROR;
 	}
 
-	DiffParser diffParser;
+	SvnDiffParser diffParser;
 	QMultiMap<QString, QString> functionSourceFilePathsAndNames = diffParser.parse();
 
 	if (diffParser.hasErrors())
@@ -60,15 +60,6 @@ int main()
 		}
 		return ReturnValue::ERROR;
 	}
-
-
-	//Analyser analyser(codeSummaryCanonicalPath);
-	//QString resultHtml = analyser.analyse();
-	//if (resultHtml.isEmpty())
-	//{
-	//	cout << "html is not created!" << endl;
-	//	return -1;
-	//}
 
 	cout << "Process finished!" << endl;
 	return 0;

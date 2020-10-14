@@ -17,6 +17,7 @@
     <WindowsTargetPlatformVersion Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">10.0.18362.0</WindowsTargetPlatformVersion>
     <QtMsBuild Condition="'$(QtMsBuild)'=='' OR !Exists('$(QtMsBuild)\qt.targets')">$(MSBuildProjectDirectory)\QtMsBuild</QtMsBuild>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>SvnAnalyser</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="Configuration">
@@ -81,14 +82,12 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Analyser.cpp" />
-    <ClCompile Include="DIffParser.cpp" />
+    <ClCompile Include="SvnDiffParser.cpp" />
     <ClCompile Include="FileParser.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Analyser.h" />
-    <ClInclude Include="DIffParser.h" />
+    <ClInclude Include="SvnDiffParser.h" />
     <ClInclude Include="ErrorHandler.h" />
     <ClInclude Include="FileParser.h" />
   </ItemGroup>

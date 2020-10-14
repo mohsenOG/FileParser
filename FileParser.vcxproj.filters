@@ -2,27 +2,21 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Analyser.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="FileParser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DIffParser.cpp">
+    <ClCompile Include="SvnDiffParser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Analyser.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="FileParser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DIffParser.h">
+    <ClInclude Include="ErrorHandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ErrorHandler.h">
+    <ClInclude Include="SvnDiffParser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

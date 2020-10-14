@@ -1,15 +1,15 @@
-#include "DiffParser.h"
+#include "SvnDiffParser.h"
 #include <qfile.h>
 #include <qvector.h>
 #include <qtextstream.h>
 
-DiffParser::DiffParser() :
+SvnDiffParser::SvnDiffParser() :
 	ErrorHandler()
 {
 	m_diffFileCanonicalPath = QString::fromLocal8Bit(::getenv("ENV_JOB_PATH")) + "/commit.diff";
 }
 
-QMultiMap<QString, QString> DiffParser::parse()
+QMultiMap<QString, QString> SvnDiffParser::parse()
 {
 	QMultiMap<QString, QString> multimap;
 

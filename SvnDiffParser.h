@@ -7,10 +7,10 @@
 #include "ErrorHandler.h"
 
 
-class DiffParser : public ErrorHandler
+class SvnDiffParser : public ErrorHandler
 {
 public:
-	DiffParser();
+	SvnDiffParser();
 	QMultiMap<QString, QString> parse();
 
 private:
