@@ -3,18 +3,23 @@
 #include <qvector.h>
 #include <qtextstream.h>
 
-DiffParser::DiffParser()
+DiffParser::DiffParser() :
+	ErrorHandler()
 {
 	m_diffFileCanonicalPath = QString::fromLocal8Bit(::getenv("ENV_JOB_PATH")) + "/commit.diff";
 }
 
 QMultiMap<QString, QString> DiffParser::parse()
 {
+	QMultiMap<QString, QString> multimap;
+
 	QFile file(m_diffFileCanonicalPath);
 	if (!file.open(QIODevice::ReadOnly))
-		return QMultiMap<QString, QString>();
+	{
+		m_errors.append("Cannot open file commit.diff. Either the path is wrong or \"svn diff\" has been failed.");
+		return multimap;
+	}
 
-	QMultiMap<QString, QString> multimap;
 	QString index;
 	QTextStream textStream(&file);
 

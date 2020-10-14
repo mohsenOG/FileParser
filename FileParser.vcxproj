@@ -89,6 +89,7 @@
   <ItemGroup>
     <ClInclude Include="Analyser.h" />
     <ClInclude Include="DIffParser.h" />
+    <ClInclude Include="ErrorHandler.h" />
     <ClInclude Include="FileParser.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

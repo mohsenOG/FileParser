@@ -5,6 +5,8 @@
 #include <QMultiMap>
 #include <qstring.h>
 
+#include "ErrorHandler.h"
+
 class ParserAbstract
 {
 public:
@@ -16,7 +18,7 @@ protected:
 };
 
 
-class CppParser : public ParserAbstract
+class CppParser : public ParserAbstract, public ErrorHandler
 {
 public:
 	CppParser(QMultiMap<QString, QString> functionPathsAndNames);

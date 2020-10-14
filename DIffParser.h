@@ -2,9 +2,12 @@
 
 #include <QMultiMap>
 #include <qstring.h>
+#include <qstringlist.h>
+
+#include "ErrorHandler.h"
 
 
-class DiffParser
+class DiffParser : public ErrorHandler
 {
 public:
 	DiffParser();

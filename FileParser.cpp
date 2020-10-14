@@ -12,7 +12,8 @@ ParserAbstract::ParserAbstract(QMultiMap<QString, QString> functionPathsAndNames
 
 CppParser::CppParser(QMultiMap<QString, QString> functionPathsAndNames)
 	:
-	ParserAbstract(functionPathsAndNames)
+	ParserAbstract(functionPathsAndNames),
+	ErrorHandler()
 {
 	// keep only cpp files.
 	auto keyList = m_functionPathsAndNames.uniqueKeys();
@@ -21,7 +22,6 @@ CppParser::CppParser(QMultiMap<QString, QString> functionPathsAndNames)
 		if (key.isEmpty() || !key.endsWith(".cpp"))
 			m_functionPathsAndNames.remove(key);
 	}
-
 }
 
 
@@ -29,22 +29,21 @@ QString CppParser::parse()
 {
 	QString jenkinsJobPath = QString::fromLocal8Bit(::getenv("ENV_JOB_PATH"));
 	QString outputFilePath = jenkinsJobPath + "/commitedFunctions.cpp";
-	
-	//printf("jenkinsJobPath %s", jenkinsJobPath.toStdString().c_str());
-	//printf("outputFilePath %s", outputFilePath.toStdString().c_str());
 
 	if (QFileInfo::exists(outputFilePath))
 		QFile::remove(outputFilePath);
 
 	QFile outputFile(outputFilePath);
 	if (!outputFile.open(QIODevice::WriteOnly | QIODevice::Text))
+	{
+		m_errors.append("Cannot open file commitedFunction.cpp. Please check the path or write permission.");
 		return QString();
+	}
 
 	// Parse each function and save it to a single file in the jenkins job
 	for (auto functionPathAndName = m_functionPathsAndNames.begin(); functionPathAndName != m_functionPathsAndNames.end(); ++functionPathAndName)
 	{
-		QString canonicalFilePath = QString::fromLocal8Bit(::getenv("ENV_A4_WORKSPACE_PATH")) + "/" + functionPathAndName.key();
-		//printf("canonicalFilePath %s", canonicalFilePath.toStdString().c_str());
+		QString canonicalFilePath = QString::fromLocal8Bit(::getenv("WORKSPACE")) + "/" + functionPathAndName.key();
 
 		QFile inputFile(canonicalFilePath);
 		if (!inputFile.open(QIODevice::ReadOnly | QIODevice::Text))

@@ -9,7 +9,7 @@
 Analyser::Analyser(QString filePath) :
 	m_codeSummaryCanonicalPath(filePath)
 {
-	m_lizardCanonicalPath = QString::fromLocal8Bit(::getenv("ENV_A4_WORKSPACE_PATH")) + "/tools/lizard-master/lizard.py";
+	m_lizardCanonicalPath = QString::fromLocal8Bit(::getenv("WORKSPACE")) + "/tools/JenkinsAutomation/lizard-master/lizard.py";
 	m_jobPath = QString::fromLocal8Bit(::getenv("ENV_JOB_PATH"));
 }
 

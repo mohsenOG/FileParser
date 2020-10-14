@@ -22,6 +22,9 @@
     <ClInclude Include="DIffParser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ErrorHandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header Files">
